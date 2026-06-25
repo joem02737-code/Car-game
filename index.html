@@ -2,451 +2,174 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>GTA MINI DRIVE</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultra Premium Website</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Inter',sans-serif;
-scroll-behavior:smooth;
-}
-
 body{
-background:#050816;
-color:white;
-overflow-x:hidden;
+margin:0;
+overflow:hidden;
+background:black;
+font-family:Arial;
 }
 
-/* Animated Background */
-
-body::before{
-content:"";
-position:fixed;
-width:300%;
-height:300%;
-left:-100%;
-top:-100%;
-background:
-radial-gradient(circle at 20% 20%,#6d28d9 0%,transparent 20%),
-radial-gradient(circle at 80% 40%,#2563eb 0%,transparent 25%),
-radial-gradient(circle at 50% 80%,#9333ea 0%,transparent 20%);
-animation:bgMove 20s linear infinite;
-z-index:-2;
-}
-
-@keyframes bgMove{
-0%{transform:rotate(0deg);}
-100%{transform:rotate(360deg);}
-}
-
-/* Particles */
-
-#particles{
+/* LOADING SCREEN */
+#loader{
 position:fixed;
 inset:0;
-z-index:-1;
-overflow:hidden;
-}
-
-.particle{
-position:absolute;
-border-radius:50%;
-background:white;
-opacity:.2;
-animation:float linear infinite;
-}
-
-@keyframes float{
-from{
-transform:translateY(110vh);
-}
-to{
-transform:translateY(-20vh);
-}
-}
-
-/* Navbar */
-
-nav{
-position:fixed;
-top:0;
-width:100%;
-padding:20px 50px;
+background:black;
 display:flex;
-justify-content:space-between;
-align-items:center;
-backdrop-filter:blur(20px);
-background:rgba(255,255,255,.05);
-border-bottom:1px solid rgba(255,255,255,.1);
-z-index:1000;
-}
-
-.logo{
-font-size:1.5rem;
-font-weight:900;
-background:linear-gradient(90deg,#60a5fa,#c084fc);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-nav ul{
-display:flex;
-gap:30px;
-list-style:none;
-}
-
-nav a{
-color:white;
-text-decoration:none;
-font-weight:600;
-transition:.3s;
-}
-
-nav a:hover{
-color:#60a5fa;
-}
-
-/* Hero */
-
-.hero{
-min-height:100vh;
-display:flex;
+flex-direction:column;
 justify-content:center;
 align-items:center;
-text-align:center;
-padding:40px;
+color:white;
+z-index:10;
 }
 
-.hero-content{
-max-width:900px;
-}
-
-.hero h1{
-font-size:clamp(3rem,8vw,7rem);
-font-weight:900;
-line-height:1;
-background:linear-gradient(90deg,#60a5fa,#c084fc,#60a5fa);
-background-size:200%;
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-animation:gradient 6s linear infinite;
-}
-
-@keyframes gradient{
-to{
-background-position:200%;
-}
-}
-
-.hero p{
+#play{
 margin-top:20px;
-font-size:1.2rem;
-opacity:.8;
-line-height:1.8;
-}
-
-.buttons{
-margin-top:35px;
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-}
-
-.btn{
-padding:15px 35px;
-border:none;
-border-radius:50px;
+font-size:40px;
+padding:15px 50px;
+border:2px solid white;
 cursor:pointer;
-font-weight:700;
-font-size:1rem;
 transition:.3s;
 }
 
-.primary{
-background:linear-gradient(90deg,#2563eb,#9333ea);
-color:white;
+#play:hover{
+background:white;
+color:black;
 }
 
-.secondary{
-background:rgba(255,255,255,.08);
-color:white;
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,.1);
-}
-
-.btn:hover{
-transform:translateY(-5px) scale(1.05);
-}
-
-/* Cards */
-
-.section{
-padding:120px 10%;
-}
-
-.section-title{
-text-align:center;
-font-size:3rem;
-margin-bottom:70px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:30px;
-}
-
-.card{
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(20px);
-border:1px solid rgba(255,255,255,.1);
-border-radius:25px;
-padding:35px;
-transition:.4s;
-}
-
-.card:hover{
-transform:translateY(-10px);
-box-shadow:0 20px 50px rgba(99,102,241,.3);
-}
-
-.card h3{
-font-size:1.4rem;
-margin-bottom:15px;
-}
-
-.card p{
-opacity:.8;
-line-height:1.7;
-}
-
-/* Stats */
-
-.stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:25px;
-}
-
-.stat{
-text-align:center;
-padding:40px;
-background:rgba(255,255,255,.05);
-border-radius:20px;
-backdrop-filter:blur(20px);
-}
-
-.stat h2{
-font-size:3rem;
-color:#60a5fa;
-}
-
-/* Footer */
-
-footer{
-padding:60px;
-text-align:center;
-opacity:.6;
-}
-
-/* Custom Cursor */
-
-.cursor{
-width:20px;
-height:20px;
-border:2px solid white;
-border-radius:50%;
+/* HUD */
+#hud{
 position:fixed;
-pointer-events:none;
-transform:translate(-50%,-50%);
-transition:.1s;
-z-index:9999;
-}
-
-@media(max-width:768px){
-
-nav{
-padding:20px;
-}
-
-nav ul{
+top:10px;
+left:10px;
+color:white;
+font-size:14px;
+z-index:5;
 display:none;
-}
-
-.hero h1{
-font-size:3rem;
-}
-
 }
 
 </style>
 </head>
+
 <body>
 
-<div id="particles"></div>
-<div class="cursor"></div>
-
-<nav>
-<div class="logo">ULTRA</div>
-<ul>
-<li><a href="#features">Features</a></li>
-<li><a href="#stats">Stats</a></li>
-<li><a href="#about">About</a></li>
-</ul>
-</nav>
-
-<section class="hero">
-<div class="hero-content">
-<h1>NEXT GENERATION WEBSITE</h1>
-<p>
-A futuristic, high-performance, animated website with premium visual effects,
-glassmorphism, smooth interactions, and a modern design.
-</p>
-
-<div class="buttons">
-<button class="btn primary">Get Started</button>
-<button class="btn secondary">Learn More</button>
-</div>
-</div>
-</section>
-
-<section class="section" id="features">
-<h2 class="section-title">Features</h2>
-
-<div class="grid">
-
-<div class="card">
-<h3>Lightning Fast</h3>
-<p>Optimized layout, smooth animations and modern responsive architecture.</p>
+<div id="loader">
+<h1>GTA MINI LOADING...</h1>
+<div id="play">PLAY</div>
 </div>
 
-<div class="card">
-<h3>Premium Design</h3>
-<p>Glassmorphism, gradients, shadows, depth and futuristic aesthetics.</p>
-</div>
+<div id="hud">SPEED: 0</div>
 
-<div class="card">
-<h3>Interactive</h3>
-<p>Custom cursor, hover effects, dynamic movement and engaging visuals.</p>
-</div>
-
-</div>
-</section>
-
-<section class="section" id="stats">
-
-<h2 class="section-title">Performance</h2>
-
-<div class="stats">
-
-<div class="stat">
-<h2>99%</h2>
-<p>Speed</p>
-</div>
-
-<div class="stat">
-<h2>100%</h2>
-<p>Responsive</p>
-</div>
-
-<div class="stat">
-<h2>24/7</h2>
-<p>Online</p>
-</div>
-
-<div class="stat">
-<h2>∞</h2>
-<p>Scalable</p>
-</div>
-
-</div>
-
-</section>
-
-<section class="section" id="about">
-
-<h2 class="section-title">About</h2>
-
-<div class="card">
-<p>
-This is a fully self-contained futuristic website template.
-Deploy it directly to GitHub Pages by replacing your current
-index.html with this code.
-</p>
-</div>
-
-</section>
-
-<footer>
-© 2026 Ultra Premium Website
-</footer>
+<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
 
 <script>
 
-/* Particles */
+let scene, camera, renderer;
+let car, speed = 0;
+let moveForward = false;
+let moveLeft = false;
+let moveRight = false;
 
-const particles=document.getElementById("particles");
+const loader = document.getElementById("loader");
+const playBtn = document.getElementById("play");
+const hud = document.getElementById("hud");
 
-for(let i=0;i<120;i++){
+/* START GAME */
+playBtn.onclick = () => {
+loader.style.display = "none";
+hud.style.display = "block";
+init();
+animate();
+};
 
-const p=document.createElement("div");
+function init(){
 
-p.classList.add("particle");
+scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x000000, 10, 200);
 
-const size=Math.random()*4+1;
+camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 
-p.style.width=size+"px";
-p.style.height=size+"px";
-p.style.left=Math.random()*100+"vw";
-p.style.animationDuration=(Math.random()*15+10)+"s";
-p.style.animationDelay=Math.random()*10+"s";
+renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-particles.appendChild(p);
+/* LIGHT */
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(5,10,7);
+scene.add(light);
+
+/* ROAD */
+const roadGeo = new THREE.PlaneGeometry(10, 500);
+const roadMat = new THREE.MeshStandardMaterial({color:0x222222});
+const road = new THREE.Mesh(roadGeo, roadMat);
+road.rotation.x = -Math.PI/2;
+road.position.z = -200;
+scene.add(road);
+
+/* CAR */
+const carGeo = new THREE.BoxGeometry(1,1,2);
+const carMat = new THREE.MeshStandardMaterial({color:0xff0000});
+car = new THREE.Mesh(carGeo, carMat);
+car.position.y = 0.5;
+scene.add(car);
+
+/* CAMERA */
+camera.position.set(0,3,6);
+camera.lookAt(car.position);
+
+/* KEY CONTROLS */
+document.addEventListener("keydown",(e)=>{
+if(e.key==="w") moveForward = true;
+if(e.key==="a") moveLeft = true;
+if(e.key==="d") moveRight = true;
+});
+
+document.addEventListener("keyup",(e)=>{
+if(e.key==="w") moveForward = false;
+if(e.key==="a") moveLeft = false;
+if(e.key==="d") moveRight = false;
+});
 
 }
 
-/* Cursor */
+function animate(){
 
-const cursor=document.querySelector(".cursor");
+requestAnimationFrame(animate);
 
-window.addEventListener("mousemove",e=>{
-cursor.style.left=e.clientX+"px";
-cursor.style.top=e.clientY+"px";
-});
+/* DRIVE SYSTEM */
+if(moveForward) speed += 0.01;
+else speed *= 0.98;
 
-/* Card Tilt */
+car.position.z -= speed;
 
-document.querySelectorAll(".card").forEach(card=>{
+/* STEERING */
+if(moveLeft) car.position.x -= 0.1;
+if(moveRight) car.position.x += 0.1;
 
-card.addEventListener("mousemove",e=>{
+/* CAMERA FOLLOW (GTA STYLE) */
+camera.position.x += (car.position.x - camera.position.x) * 0.1;
+camera.position.z = car.position.z + 6;
+camera.lookAt(car.position);
 
-const rect=card.getBoundingClientRect();
+/* HUD */
+hud.innerHTML = "SPEED: " + (speed*100).toFixed(1);
 
-const x=e.clientX-rect.left;
-const y=e.clientY-rect.top;
+/* LOOP ROAD */
+if(car.position.z < -200){
+car.position.z = 0;
+}
 
-const rotateY=(x-rect.width/2)/20;
-const rotateX=-(y-rect.height/2)/20;
+renderer.render(scene,camera);
 
-card.style.transform=
-`perspective(1000px)
-rotateX(${rotateX}deg)
-rotateY(${rotateY}deg)
-translateY(-10px)`;
+}
 
-});
-
-card.addEventListener("mouseleave",()=>{
-card.style.transform="rotateX(0) rotateY(0)";
-});
-
+window.addEventListener("resize",()=>{
+camera.aspect = window.innerWidth/window.innerHeight;
+camera.updateProjectionMatrix();
+renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
 </script>
