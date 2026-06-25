@@ -1,135 +1,157 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Ultra Car Demo</title>
+<title>Realistic 3D Car</title>
 <style>
-body{margin:0;overflow:hidden;background:#111;}
-canvas{display:block;}
+body{margin:0;overflow:hidden;}
 </style>
 </head>
 
 <body>
-<canvas id="c"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <script>
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
+/* SCENE */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87ceeb);
 
-canvas.width = innerWidth;
-canvas.height = innerHeight;
+/* CAMERA */
+const camera = new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
 
-/* CAR */
-const car = {
-x:canvas.width/2,
-y:canvas.height-150,
-speed:0,
-angle:0
-};
+/* RENDERER */
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth,innerHeight);
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
 
+/* LIGHTS (IMPORTANT FOR REALISM) */
+const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+sun.position.set(5,10,5);
+sun.castShadow = true;
+scene.add(sun);
+
+scene.add(new THREE.AmbientLight(0x404040,0.6));
+
+/* GROUND (with slight reflection illusion) */
+const ground = new THREE.Mesh(
+new THREE.PlaneGeometry(200,200),
+new THREE.MeshStandardMaterial({
+color:0x1a1a1a,
+roughness:0.9,
+metalness:0.1
+})
+);
+ground.rotation.x = -Math.PI/2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+/* =========================
+   🚗 REAL CAR BUILD
+========================= */
+const car = new THREE.Group();
+
+/* BODY (long realistic chassis) */
+const body = new THREE.Mesh(
+new THREE.BoxGeometry(2.4,0.6,5),
+new THREE.MeshStandardMaterial({
+color:0xff1e2d,
+metalness:0.7,
+roughness:0.25
+})
+);
+body.position.y = 0.8;
+body.castShadow = true;
+car.add(body);
+
+/* FRONT HOOD (lower front = car shape feel) */
+const hood = new THREE.Mesh(
+new THREE.BoxGeometry(2.2,0.5,2.2),
+new THREE.MeshStandardMaterial({
+color:0xe60026,
+metalness:0.8,
+roughness:0.2
+})
+);
+hood.position.set(0,0.7,1.4);
+car.add(hood);
+
+/* CABIN (glass area) */
+const cabin = new THREE.Mesh(
+new THREE.BoxGeometry(1.6,0.7,2),
+new THREE.MeshStandardMaterial({
+color:0x111111,
+metalness:0.2,
+roughness:0.1,
+transparent:true,
+opacity:0.7
+})
+);
+cabin.position.set(0,1.2,-0.3);
+car.add(cabin);
+
+/* WHEELS (proper size + depth) */
+function wheel(x,z){
+const w = new THREE.Mesh(
+new THREE.CylinderGeometry(0.45,0.45,0.4,24),
+new THREE.MeshStandardMaterial({
+color:0x111111,
+roughness:1
+})
+);
+w.rotation.z = Math.PI/2;
+w.position.set(x,0.45,z);
+w.castShadow = true;
+car.add(w);
+}
+
+wheel(-1.2, 1.6);
+wheel( 1.2, 1.6);
+wheel(-1.2,-1.6);
+wheel( 1.2,-1.6);
+
+scene.add(car);
+
+/* CAMERA POSITION */
+camera.position.set(0,3,8);
+
+/* CONTROLS */
 let keys = {};
-
 addEventListener("keydown",e=>keys[e.key]=true);
 addEventListener("keyup",e=>keys[e.key]=false);
 
-/* ROAD LINES */
-let lines = [];
-for(let i=0;i<20;i++){
-lines.push({y:i*40});
+/* ANIMATION */
+function animate(){
+requestAnimationFrame(animate);
+
+/* DRIVE */
+if(keys["w"]) car.position.z -= 0.15;
+if(keys["s"]) car.position.z += 0.15;
+if(keys["a"]) car.position.x -= 0.15;
+if(keys["d"]) car.position.x += 0.15;
+
+/* CAMERA FOLLOW (smooth GTA style) */
+camera.position.lerp(
+new THREE.Vector3(
+car.position.x,
+car.position.y + 3,
+car.position.z + 8
+),
+0.08
+);
+camera.lookAt(car.position);
+
+/* WHEEL ROTATION FEEL */
+car.children.forEach(o=>{
+if(o.geometry && o.geometry.type==="CylinderGeometry"){
+o.rotation.x += 0.3;
 }
-
-/* LIGHT SOURCE */
-let lightX = -200;
-let lightY = -200;
-
-function drawCar(){
-
-/* SHADOW */
-ctx.fillStyle="rgba(0,0,0,0.4)";
-ctx.beginPath();
-ctx.ellipse(car.x+10,car.y+40,40,20,0,0,Math.PI*2);
-ctx.fill();
-
-/* BODY GRADIENT (REALISTIC LOOK) */
-let body = ctx.createLinearGradient(car.x-20,car.y,car.x+40,car.y+60);
-body.addColorStop(0,"#ff003c");
-body.addColorStop(0.5,"#ff2f6d");
-body.addColorStop(1,"#8b001f");
-
-ctx.fillStyle = body;
-
-/* MAIN CAR BODY */
-ctx.fillRect(car.x-25,car.y-60,50,100);
-
-/* ROOF */
-ctx.fillStyle="#b0002a";
-ctx.fillRect(car.x-18,car.y-90,36,30);
-
-/* WINDOW (REFLECTION EFFECT) */
-let glass = ctx.createLinearGradient(car.x,car.y-90,car.x,car.y-40);
-glass.addColorStop(0,"rgba(255,255,255,0.6)");
-glass.addColorStop(1,"rgba(0,0,0,0.3)");
-
-ctx.fillStyle=glass;
-ctx.fillRect(car.x-15,car.y-85,30,25);
-
-/* LIGHT HIGHLIGHT */
-ctx.fillStyle="rgba(255,255,255,0.2)";
-ctx.fillRect(car.x-20,car.y-60,10,100);
-
-/* WHEELS */
-ctx.fillStyle="#111";
-ctx.fillRect(car.x-30,car.y-50,10,25);
-ctx.fillRect(car.x+20,car.y-50,10,25);
-ctx.fillRect(car.x-30,car.y+10,10,25);
-ctx.fillRect(car.x+20,car.y+10,10,25);
-
-/* WHEEL SHINE */
-ctx.fillStyle="rgba(255,255,255,0.1)";
-ctx.fillRect(car.x-29,car.y-48,4,20);
-ctx.fillRect(car.x+21,car.y-48,4,20);
-}
-
-function loop(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-/* DARK ROAD */
-ctx.fillStyle="#1a1a1a";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-/* ROAD CENTER */
-ctx.fillStyle="#333";
-ctx.fillRect(canvas.width/2-100,0,200,canvas.height);
-
-/* ROAD LINES */
-ctx.fillStyle="white";
-lines.forEach(l=>{
-l.y += car.speed;
-
-if(l.y>canvas.height) l.y=0;
-
-ctx.fillRect(canvas.width/2-5,l.y,10,30);
 });
 
-/* CONTROLS */
-if(keys["a"]) car.x -= 5;
-if(keys["d"]) car.x += 5;
-if(keys["w"]) car.speed += 0.2;
-if(keys["s"]) car.speed -= 0.2;
-
-car.speed *= 0.95;
-
-/* DRAW CAR */
-drawCar();
-
-/* CAMERA SHAKE FEEL */
-ctx.fillStyle="rgba(255,255,255,0.02)";
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-requestAnimationFrame(loop);
+renderer.render(scene,camera);
 }
 
-loop();
+animate();
 </script>
 
 </body>
