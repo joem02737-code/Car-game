@@ -1,5 +1,5 @@
 /* =========================
-   🚀 GTA UPGRADED V2
+🚀 GTA UPGRADED V2 (FIXED FORMAT)
 ========================= */
 
 if(!window.THREE){
@@ -11,10 +11,12 @@ return;
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x87ceeb);
 
-const camera = new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,1000);
+const camera = new THREE.PerspectiveCamera(
+75, innerWidth/innerHeight, 0.1, 1000
+);
 
 const renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setSize(innerWidth,innerHeight);
+renderer.setSize(innerWidth, innerHeight);
 document.body.appendChild(renderer.domElement);
 
 /* LIGHT */
@@ -52,22 +54,20 @@ const traffic = [];
 const explosions = [];
 
 /* MISSION */
-let mission = {
-x:0,
-z:-120,
-active:true
-};
+let mission = { x:0, z:-120, active:true };
 
 /* INPUT */
-addEventListener("keydown",e=>keys[e.key]=true);
-addEventListener("keyup",e=>keys[e.key]=false);
+addEventListener("keydown", e => keys[e.key]=true);
+addEventListener("keyup", e => keys[e.key]=false);
 
 /* SOUND */
 let audioCtx;
 function beep(f){
-if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+if(!audioCtx)
+audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+
 const o = audioCtx.createOscillator();
-o.frequency.value=f;
+o.frequency.value = f;
 o.connect(audioCtx.destination);
 o.start();
 o.stop(audioCtx.currentTime+0.05);
@@ -75,7 +75,7 @@ o.stop(audioCtx.currentTime+0.05);
 
 /* SHOOT */
 function shoot(){
-if(cooldown>0) return;
+if(cooldown > 0) return;
 cooldown = 10;
 beep(500);
 
@@ -83,6 +83,7 @@ const b = new THREE.Mesh(
 new THREE.SphereGeometry(0.2),
 new THREE.MeshBasicMaterial({color:0xffff00})
 );
+
 b.position.copy(car.position);
 scene.add(b);
 bullets.push(b);
@@ -94,7 +95,13 @@ const p = new THREE.Mesh(
 new THREE.BoxGeometry(1,1,2),
 new THREE.MeshBasicMaterial({color:0x0000ff})
 );
-p.position.set(Math.random()*30-15,0,car.position.z-80);
+
+p.position.set(
+Math.random()*30-15,
+0,
+car.position.z-80
+);
+
 scene.add(p);
 police.push(p);
 }
@@ -108,7 +115,13 @@ const t = new THREE.Mesh(
 new THREE.BoxGeometry(1,1,2),
 new THREE.MeshBasicMaterial({color:0x00ff00})
 );
-t.position.set(Math.random()*30-15,0,car.position.z-100);
+
+t.position.set(
+Math.random()*30-15,
+0,
+car.position.z-100
+);
+
 scene.add(t);
 traffic.push(t);
 }
@@ -124,6 +137,7 @@ new THREE.MeshBasicMaterial({color:0xff6600})
 );
 
 e.position.set(x,y,z);
+
 e.velocity = new THREE.Vector3(
 (Math.random()-0.5)*0.4,
 Math.random()*0.4,
@@ -135,7 +149,7 @@ explosions.push(e);
 }
 }
 
-/* CAMERA BASE */
+/* CAMERA */
 const camOffset = new THREE.Vector3(0,5,10);
 
 /* HUD */
@@ -148,12 +162,14 @@ document.body.appendChild(hud);
 
 /* MINIMAP */
 const mini = document.createElement("canvas");
-mini.width=150;mini.height=150;
+mini.width = 150;
+mini.height = 150;
 mini.style.position="fixed";
 mini.style.right="10px";
 mini.style.bottom="10px";
 mini.style.border="2px solid white";
 document.body.appendChild(mini);
+
 const mctx = mini.getContext("2d");
 
 /* LOOP */
@@ -170,7 +186,7 @@ shake *= 0.9;
 /* COOLDOWN */
 if(cooldown>0) cooldown--;
 
-/* DRIVING (SMOOTH) */
+/* DRIVE */
 speed *= 0.96;
 
 if(keys["w"]) speed += 0.015;
@@ -192,7 +208,7 @@ camera.position.y += camShakeY;
 camera.lookAt(car.position);
 
 /* SHOOT */
-if(keys[" "] ) shoot();
+if(keys[" "]) shoot();
 
 /* BULLETS */
 for(let i=bullets.length-1;i>=0;i--){
@@ -211,7 +227,11 @@ const p = police[j];
 if(b.position.distanceTo(p.position)<1){
 explode(p.position.x,p.position.y,p.position.z);
 
-p.position.set(Math.random()*30-15,0,car.position.z-100);
+p.position.set(
+Math.random()*30-15,
+0,
+car.position.z-100
+);
 
 score += 10;
 wanted = Math.min(5,wanted+1);
@@ -223,10 +243,9 @@ break;
 }
 }
 
-/* POLICE AI (SMARTER) */
+/* POLICE AI */
 police.forEach(p=>{
 p.position.z += 0.04 + wanted*0.015;
-
 p.position.x += (car.position.x - p.position.x)*0.03;
 
 if(p.position.distanceTo(car.position)<1.5){
@@ -234,7 +253,7 @@ health -= 0.4 + wanted*0.1;
 }
 });
 
-/* TRAFFIC LOOP */
+/* TRAFFIC */
 traffic.forEach(t=>{
 t.position.z += 0.05;
 
@@ -256,10 +275,10 @@ explosions.splice(i,1);
 }
 }
 
-/* WANTED SYSTEM */
+/* WANTED */
 wanted = Math.max(0,Math.min(5,wanted));
 
-/* SPAWN MORE POLICE IF WANTED HIGH */
+/* SPAWN MORE POLICE */
 if(wanted >= 3 && Math.random()<0.02){
 spawnPolice();
 }
@@ -272,6 +291,7 @@ const dz = car.position.z - mission.z;
 if(Math.sqrt(dx*dx+dz*dz)<2){
 score += 100;
 wanted++;
+
 mission.x = Math.random()*20-10;
 mission.z = car.position.z - 150;
 }
@@ -279,11 +299,11 @@ mission.z = car.position.z - 150;
 
 /* HUD */
 hud.innerHTML =
-`🚗 SPEED: ${speed.toFixed(2)}<br>
-❤️ HEALTH: ${health.toFixed(1)}<br>
-💰 SCORE: ${score}<br>
-🚨 WANTED: ${"⭐".repeat(wanted)}<br>
-🎯 MISSION ACTIVE`;
+"🚗 SPEED: " + speed.toFixed(2) + "<br>" +
+"❤️ HEALTH: " + health.toFixed(1) + "<br>" +
+"💰 SCORE: " + score + "<br>" +
+"🚨 WANTED: " + "⭐".repeat(wanted) + "<br>" +
+"🎯 MISSION ACTIVE";
 
 /* MINIMAP */
 mctx.fillStyle="black";
@@ -294,8 +314,11 @@ mctx.fillRect(75,75,4,4);
 
 mctx.fillStyle="blue";
 police.forEach(p=>{
-mctx.fillRect(75+(p.position.x-car.position.x)*2,
-75+(p.position.z-car.position.z)*2,3,3);
+mctx.fillRect(
+75+(p.position.x-car.position.x)*2,
+75+(p.position.z-car.position.z)*2,
+3,3
+);
 });
 
 /* GAME OVER */
@@ -304,7 +327,6 @@ alert("WASTED");
 location.reload();
 }
 
-/* RENDER */
 renderer.render(scene,camera);
 }
 
