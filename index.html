@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #222;
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="game" width="400" height="600"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+// player car
+let car = {
+  x: 175,
+  y: 500,
+  width: 50,
+  height: 80,
+  speed: 5
+};
+
+// obstacles
+let obstacles = [];
+let gameOver = false;
+
+// controls
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft") car.x -= car.speed;
+  if (e.key === "ArrowRight") car.x += car.speed;
+});
+
+// create obstacles
+function spawnObstacle() {
+  let x = Math.random() * 350;
+  obstacles.push({ x: x, y: -100, width: 50, height: 80, speed: 3 });
+}
+
+// collision
+function collide(a, b) {
+  return !(
+    a.x > b.x + b.width ||
+    a.x + a.width < b.x ||
+    a.y > b.y + b.height ||
+    a.y + a.height < b.y
+  );
+}
+
+// game loop
+function update() {
+  if (gameOver) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // draw car
+  ctx.fillStyle = "red";
+  ctx.fillRect(car.x, car.y, car.width, car.height);
+
+  // move obstacles
+  for (let i = 0; i < obstacles.length; i++) {
+    let obs = obstacles[i];
+    obs.y += obs.speed;
+
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+
+    if (collide(car, obs)) {
+      gameOver = true;
+      alert("Game Over!");
+    }
+  }
+
+  // remove off-screen obstacles
+  obstacles = obstacles.filter(o => o.y < 650);
+
+  requestAnimationFrame(update);
+}
+
+// spawn obstacles every 1 second
+setInterval(spawnObstacle, 1000);
+
+update();
+</script>
+
+</body>
+</html>
