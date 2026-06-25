@@ -15,8 +15,6 @@
 <script>
 // ================= SCENE =================
 const scene = new THREE.Scene();
-
-// 🌅 sunset sky
 scene.background = new THREE.Color(0xffb37a);
 
 // CAMERA
@@ -33,7 +31,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// LIGHT (sunset glow)
+// LIGHT
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(5, 10, 5);
 scene.add(light);
@@ -48,7 +46,6 @@ road.position.z = -200;
 scene.add(road);
 
 // lane lines
-const laneLines = [];
 for (let i = 0; i < 50; i++) {
   const line = new THREE.Mesh(
     new THREE.BoxGeometry(0.1, 0.1, 3),
@@ -56,13 +53,11 @@ for (let i = 0; i < 50; i++) {
   );
   line.position.set(0, 0.01, -i * 10);
   scene.add(line);
-  laneLines.push(line);
 }
 
 // ================= PLAYER CAR =================
 const car = new THREE.Group();
 
-// body
 const body = new THREE.Mesh(
   new THREE.BoxGeometry(1.5, 0.5, 3),
   new THREE.MeshStandardMaterial({ color: 0xff0000 })
@@ -70,13 +65,12 @@ const body = new THREE.Mesh(
 body.position.y = 0.5;
 car.add(body);
 
-// top
-const top = new THREE.Mesh(
+const topPart = new THREE.Mesh(
   new THREE.BoxGeometry(1, 0.5, 1.5),
   new THREE.MeshStandardMaterial({ color: 0xaa0000 })
 );
-top.position.y = 1;
-car.add(top);
+topPart.position.y = 1;
+car.add(topPart);
 
 car.position.y = 0;
 scene.add(car);
@@ -123,21 +117,18 @@ function animate() {
 
   if (gameOver) return;
 
-  // movement (WASD)
+  // WASD controls
   if (keys["a"]) car.position.x -= 0.15;
   if (keys["d"]) car.position.x += 0.15;
   if (keys["w"]) car.position.z -= speed;
   if (keys["s"]) car.position.z += 0.1;
 
-  // keep on road
   car.position.x = Math.max(-4, Math.min(4, car.position.x));
 
-  // camera follow
   camera.position.x = car.position.x;
   camera.position.z = car.position.z + 12;
   camera.lookAt(car.position);
 
-  // move enemies
   enemies.forEach(e => {
     e.position.z += 0.6;
 
@@ -153,7 +144,7 @@ function animate() {
 
 animate();
 
-// resize
+// resize fix
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
